@@ -4,11 +4,11 @@ body {
     line-height: 1.4;
     background-color: rgb(7, 7, 7);
     margin: 0;
-    padding: 50;
+    padding: 50px;
   }
   
   .chat-box {
-    height: 150px;
+    height: 350px;
     overflow: auto;
     padding: 10px;
   }
@@ -63,4 +63,8 @@ body {
     border-radius: 50%;
     width: 50px;
     height: 50px;
+  }
+  
+  * {
+    box-sizing: border-box;
   }

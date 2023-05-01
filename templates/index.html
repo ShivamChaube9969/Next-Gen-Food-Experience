@@ -20,11 +20,11 @@
 <body>
   <div class="container mt-5">
     <h1 style="color:white">Your AI Food Assistant</h1>
-    <div class="bot-message mt-3 p-3 rounded">
-        <img src="{{ url_for('static', filename='images/gpt.jpg') }}" class="bot-icon">
-        <p>{{ message }}</p>
-    </div>
     <div class="chat-box mt-3">
+        <div class="bot-message mt-3 p-3 rounded">
+            <img src="{{ url_for('static', filename='images/gpt.jpg') }}" class="bot-icon">
+            <p style="white-space: pre-line">{{message}}</p>
+        </div>
       <!-- Chat messages will be added here dynamically -->
     </div>
     <div class="form-group mt-3">
@@ -69,28 +69,17 @@
           },
           body: JSON.stringify({ message })
         })
-          .then(response => response.json())
+          .then(response => response.text())
           .then(data => {
                       messageInput.value = "";
             const messageDiv = document.createElement("div");
             messageDiv.classList.add("mt-3", "p-3", "rounded");
             messageDiv.classList.add("bot-message");
            
-            const content = data.content;
-            
-            // Check if the content has code block
-            const hasCodeBlock = content.includes("```");
-            if (hasCodeBlock) {
-              // If the content has code block, wrap it in a <pre><code> element
-              const codeContent = content.replace(/```([\s\S]+?)```/g, '</p><pre><code>$1</code></pre><p>');
+            const content = data;
 
-             
-              messageDiv.innerHTML = `<img src="{{ url_for('static', filename='images/gpt.jpg') }}" class="bot-icon"><p>${codeContent}</p>`
-             
-            }
-            else{
-              messageDiv.innerHTML = `<img src="{{ url_for('static', filename='images/gpt.jpg') }}" class="bot-icon"><p>${content}</p>`
-            }
+            messageDiv.innerHTML = `<img src="{{ url_for('static', filename='images/gpt.jpg') }}" class="bot-icon"><p>${content}</p>`
+
             chatBox.appendChild(messageDiv);
             chatBox.scrollTop = chatBox.scrollHeight;
 
