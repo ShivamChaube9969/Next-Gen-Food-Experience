@@ -19,7 +19,11 @@
 
 <body>
   <div class="container mt-5">
-    <h1 style="color:white">Food Assistant</h1>
+    <h1 style="color:white">Your AI Food Assistant</h1>
+    <div class="bot-message mt-3 p-3 rounded">
+        <img src="{{ url_for('static', filename='images/gpt.jpg') }}" class="bot-icon">
+        <p>{{ message }}</p>
+    </div>
     <div class="chat-box mt-3">
       <!-- Chat messages will be added here dynamically -->
     </div>
@@ -29,14 +33,6 @@
     <button type="button" class="btn btn-primary" id="send-btn">Send</button>
   </div>
   <script>
-setInterval(highlightAll,1000);
-// Function to highlight code using highlight.js library
-function highlightAll() {
-  document.querySelectorAll("pre code").forEach(block => {
-    hljs.highlightBlock(block);
-  });
-}
-
     const chatBox = document.querySelector(".chat-box");
     const messageInput = document.querySelector("#message-input");
     const sendBtn = document.querySelector("#send-btn");
@@ -59,9 +55,6 @@ function highlightAll() {
       chatBox.appendChild(messageDiv);
       chatBox.scrollTop = chatBox.scrollHeight;
     }
-
-
-
 
     function sendMessage() {
       const message = messageInput.value.trim();

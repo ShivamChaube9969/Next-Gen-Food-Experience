@@ -1,13 +1,14 @@
 import openai
 # For the UI
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request, session
 
 
 # Create a new Flask app
 app = Flask(__name__)
+app.secret_key = "mysecretkey"
 
 
-openai.api_key = open("C:/Users/Shivam/PythonVSCode/Next-Gen-Food-Experience/key.txt","r").read().strip("\n")
+openai.api_key = open("C:/Users/Shivam/PythonVSCode/key.txt","r").read().strip("\n")
 
 def chat(inp, message_history, role="user"):
 
@@ -34,33 +35,34 @@ def chat(inp, message_history, role="user"):
 # Define the default route to return the index.html file
 @app.route("/")
 def index():
-    return render_template("index.html")
+
+    # Setting the context
+    session['message_history'] = [{"role": "user", "content": """
+    You are OrderBot, an automated service to collect orders for a restaurant. You will provide a list of 20 ingredients that the user will choose from.
+    When you present the ingredients, present the ingredients with a greeting message and start immediately with the ingredients, no further commentary, and then ingredients like "1:" "2:" ...etc. If you understand, say, OK, and begin when I say "begin." """},{"role": "assistant", "content": """
+    OK, I understand. Begin when you're ready."""}]
+
+    # Retrieve the message history from the session
+    message_history = session['message_history']
+
+    # Generate a chat response with an initial message ("Begin")
+    reply_content, message_history = chat("Begin", message_history)
+    print(reply_content.content)
+
+    # Render the index.html file and pass in the message history
+    return render_template("index.html", message=reply_content.content)
+
 
 # Define the /api route to handle POST requests
 @app.route("/api", methods=["POST"])
 def api():
-
-    # Setting the context
-    message_history = [{"role": "user", "content": """
-    You are OrderBot, an automated service to collect orders for a pizza restaurant. \
-    You first greet the customer, then collects the order, \
-    You will provide list of 20 random ingredients to the user, \
-    
-    
-    """}]
-
-
-# """You are a friendly food assistant chatbot that interacts with customers to take their food orders but not in a conventional way. You will provide list of 20 random ingredients from which the customer will pick 5 top ingredients. Wait for the If you understand, say, OK, and begin when I say "begin." """
-#Then you will ask the customer how many recipes he wants you to generate based on the given response you will generate those many recipes and make sure these recipes includes the ingedrients mentioned by the customer earlier.
-# ,{"role": "assistant", "content": f"""OK, I understand. Begin when you're ready."""}
-
-    # Generate a chat response with an initial message ("Begin")
-    reply_content, message_history = chat("Begin", message_history)
-
     # Get the message from the POST request
     message = request.json.get("message")
+
+    # Retrieve the message history and button messages from the session
+    message_history = session['message_history']
+
     # Send the message to OpenAI's API and receive the response
-    
     reply_content, message_history = chat(message, message_history)
     
     if reply_content!=None:
